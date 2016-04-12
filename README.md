@@ -13,7 +13,7 @@ ___
 
 ### Hardware you need
 
-1. **Raspberry Pi 2 (Model B)**  - [Buy at Amazon](http://amzn.com/B00T2U7R7I)
+1. **Raspberry Pi 2 (Model B)**  - [Buy at Amazon](http://amzn.com/B00T2U7R7I). **UPDATE**: Even though this guide was built using a Raspberry Pi 2, it should work [just fine](https://github.com/amzn/alexa-avs-raspberry-pi/issues/36) with a Raspberry Pi 3 as well. Pi 1 users - please see this thread for [help](https://github.com/amzn/alexa-avs-raspberry-pi/issues/2).
 2. **Micro-USB power cable** for Raspberry Pi (included with Raspberry Pi)
 3. **Micro SD Card** - To get started with Raspberry Pi you need an operating system. NOOBS (New Out Of the Box Software) is an easy-to-use operating system install manager for the Raspberry Pi. The simplest way to get NOOBS is to buy an SD card with NOOBS preinstalled - [Raspberry Pi 8GB Preloaded (NOOBS) Micro SD Card](https://www.amazon.com/gp/product/B00ENPQ1GK/ref=oh_aui_detailpage_o01_s00?ie=UTF8&psc=1) 
 4. An **Ethernet cable**
@@ -88,7 +88,7 @@ Now let's SSH into your Raspberry Pi. To do that, you need to know the IP addres
 Type this command into the terminal: 
 
 	hostname -I
-	> 192.168.1.10 //this is an example Raspberry Pi’s hostname, it would be different for you
+	> 192.168.1.10 //this is an example Raspberry Pi’s IP - it would be different for you
 
 If you’re on a Windows PC, follow the instructions here to [SSH Using windows](https://www.raspberrypi.org/documentation/remote-access/ssh/windows.md)
 
@@ -110,6 +110,8 @@ VNC is a graphical desktop sharing system that will allow you to remotely contro
 
 To start the VNC Server, type: 
 	tightvncserver
+
+You will be asked to set a password to access the Pi. You'll need this when you try to access the Pi from another computer, which we will be doing in a moment. 
 
 **Run VNCServer at Startup**
 
@@ -198,7 +200,7 @@ Type the following into the terminal:
 
 Verify Node isn't already installed. It should print 'command not found'.
 
-	node —version
+	node -v
 	> command not found
 
 Now type: 
@@ -221,25 +223,27 @@ You need to have Java Development Kit (JDK) version 8 or higher installed on the
 **Step 1: Download JDK**
 Assuming this is a fresh Raspberry Pi and you do not already have JDK installed, you'll need to download JDK 8 from [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). 
 
-- **Raspberry Pi 1 and 2 models** - The binary you are looking for is “Linux ARM 32 Hard Float ABI”. Download the tar.gz file jdk-8u73-linux-arm32-vfp-hflt.tar.gz from the Oracle link above.
-- **Raspberry Pi 3 model** - The binary you are looking for is  “Linux ARM 64 Soft Float ABI”. Download the tar.gz file jdk-8u77-linux-arm64-vfp-hflt.tar.gz from the Oracle link above.
+
+Download the tar.gz file listed for **Linux ARM 32 Hard Float ABI** from the Oracle link above. At the time of this writing, the name of this file is jdk-8u77-linux-arm32-vfp-hflt.tar.gz.
+
+**NOTE**: Although there is a 64-bit ARMv8 that Apple and some other smartphones use, there are no raspberry 64-bit ARM processors on pis yet. More info: [Raspberry Pi Blog.com](http://www.rpiblog.com/2014/03/installing-oracle-jdk-8-on-raspberry-pi.html)
 
 
 **Step 2: Extract the contents**
 Extract the contents of the tarball to the /opt directory:
 
-	sudo tar zxvf jdk-8u73-linux-arm32-vfp-hflt.tar.gz -C /opt
+	sudo tar zxvf jdk-8u77-linux-arm32-vfp-hflt.tar.gz -C /opt
 	
 Set default java and javac to the new installed jdk8.
 
-	sudo update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_73/bin/javac 1
+	sudo update-alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_77/bin/javac 1
 	
-	sudo update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_73/bin/java 1
+	sudo update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_77/bin/java 1
 
 	sudo update-alternatives --config javac
 	sudo update-alternatives --config java
 
-**NOTE**: If asked to choose an alternative, type the number corresponding to the jdk version you just installed - for example - jdk1.8.0_73
+**NOTE**: If asked to choose an alternative, type the number corresponding to the jdk version you just installed - for example - jdk1.8.0_77
 
 Now verify the commands with the -version option:
 
@@ -279,7 +283,7 @@ Save the file. Log out and back into the Raspberry Pi so the profile script take
 ![](assets/login-amazon-dev-portal.png)
 ### 3.2 Download the sample app code and dependencies on the Raspberry Pi
 
-[Download](https://github.com/amzn/alexa-avs-raspberry-pi.git) the sample apps zip file. By downloading this package, you agree to the [Alexa Voice Service Agreement](https://developer.amazon.com/edw/avs_agreement.html).
+[Download](https://github.com/amzn/alexa-avs-raspberry-pi/archive/master.zip) the sample apps zip file from the [Github repo](https://github.com/amzn/alexa-avs-raspberry-pi.git). By downloading this package, you agree to the [Alexa Voice Service Agreement](https://developer.amazon.com/edw/avs_agreement.html).
 
 ### 3.3 Copy and expand the .zip file on your Raspberry Pi
 
@@ -290,7 +294,7 @@ Save the file. Log out and back into the Raspberry Pi so the profile script take
 
 ### 3.4 Register your product and create a security profile.
 
-1. Login to Amazon Developer Portal - [developer.amazon.com](https://developer.amazon.com/)
+1. Login to Amazon Developer Portal - [developer.amazon.com](https://developer.amazon.com/login.html)
 2. Click on Apps & Services tab -> Alexa -> Alexa Voice Service -> Get Started
 ![](assets/avs-navigation.png)
 3. In the Register a Product Type menu, select **Device**.
@@ -375,7 +379,8 @@ Change directories to \<REFERENCE_IMPLEMENTATION>/samples/javaclient.
 
 **Step 2**: Edit the text file ssl.cnf, which is an SSL configuration file. Fill in appropriate values in place of the placeholder text that starts with YOUR_. 
 
-Note that **countryName** must be two characters. If it is not two characters, certificate creation will fail. 
+Note that **countryName** must be two characters. If it is not two characters, certificate creation will fail. [Here's](https://gist.github.com/ajotwani/a0d54110a968c984fd0b) what the ssl.cnf file would look like, replacing country, state, locality with your respective info. 
+
 
 **Step 3**: Make the certificate generation script executable by typing:
 
@@ -652,7 +657,7 @@ ___
 
 Check to see if you are seeing the response coming through on the Terminal and if you see the response cards on your Alexa app. If yes, you probably need to force audio through local 3.5mm jack, instead of the HDMI output (this can happen even if you don’t have an HDMI monitor plugged in). 
 
-To force audio through local 3.5 mm jack, pen Terminal, and type
+To force audio through local 3.5 mm jack, open Terminal, and type
 
 	sudo raspi-config 
 
@@ -661,11 +666,29 @@ See [Raspberry Pi Audio Configuration](https://www.raspberrypi.org/documentation
 
 ### How do I find the IP address of my Raspberry Pi?
 	
-	hostname -I
-	
+	hostname -I	
+
 ### Unable to fetch errors - 
 If you run into some "Unable to fetch" errors while trying to install VLC, try the following - 	
 
 	sudo apt-get update
 	sudo apt-get upgrade
 	sudo apt-get install vlc-nox vlc-data
+
+### Having issues with npm
+If you run into some "npm not found" errors after installing node (older versions of Raspbian's node), try the following -
+
+	sudo apt-get update
+	sudo apt-get upgrade
+	sudo apt-get install npm
+ 
+### What if I cannot find an ethernet port for the pi?
+
+Check out this url on how to bridge the connection between a laptop's wifi connection and the ethernet port on your pi. 
+https://www.hackster.io/Anwaarullah/sharing-wifi-with-raspberry-pi-using-a-lan-cable-ae1f44
+
+
+### What does the ssl.cnf file look like?
+[Here's](https://gist.github.com/ajotwani/a0d54110a968c984fd0b) what the ssl.cnf file would look like, replacing country, state, locality with your respective info. 
+
+
