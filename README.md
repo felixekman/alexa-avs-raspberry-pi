@@ -3,7 +3,7 @@
 ## About the Project
 This project demonstrates how to access and test the Alexa Voice Service using a Java client (running on a Raspberry Pi), and a Node.js server. You will be using the Node.js server to get a Login with Amazon authorization code by visiting a website using your computer's (Raspberry Pi in this case) web browser. 
 
-This guide provides step-by-step instructions for obtaining the sample code, the dependencies, and the hardware you need to get the reference implementation running on your Pi.
+This guide provides step-by-step instructions for obtaining the sample code, the dependencies, and the hardware you need to get the reference implementation running on your Pi. For Windows, Mac, or generic linux instructions, see [this guide](https://developer.amazon.com/public/solutions/alexa/alexa-voice-service/docs/java-client-sample).
 
 ![](assets/rpi-5.jpg)
 
@@ -18,8 +18,9 @@ ___
 3. **Micro SD Card** - To get started with Raspberry Pi you need an operating system. NOOBS (New Out Of the Box Software) is an easy-to-use operating system install manager for the Raspberry Pi. The simplest way to get NOOBS is to buy an SD card with NOOBS preinstalled - [Raspberry Pi 8GB Preloaded (NOOBS) Micro SD Card](https://www.amazon.com/gp/product/B00ENPQ1GK/ref=oh_aui_detailpage_o01_s00?ie=UTF8&psc=1) 
 4. An **Ethernet cable**
 5. **USB 2.0 Mini Microphone** - Raspberry Pi does not have a built-in microphone; to interact with Alexa you'll need an external one to plug in - [Buy at Amazon](http://amzn.com/B00IR8R7WQ)
-6. A **USB Keyboard & Mouse**, and an external **HDMI Monitor** - we also recommend having a USB keyboard and mouse as well as an HDMI monitor handy if for some reason you can’t “SSH” into your Raspberry Pi. More on “SSH” later. 
-7. WiFi Wireless Adapter (Optional) [Buy at Amazon](http://www.amazon.com/CanaKit-Raspberry-Wireless-Adapter-Dongle/dp/B00GFAN498/)
+6. **External Speaker** with 3.5mm audio socket/stereo headset jack - [Buy at Amazon](http://amzn.com/B007OYAVLI)
+7. A **USB Keyboard & Mouse**, and an external **HDMI Monitor** - we also recommend having a USB keyboard and mouse as well as an HDMI monitor handy if for some reason you can’t “SSH” into your Raspberry Pi. More on “SSH” later.
+8. WiFi Wireless Adapter (Optional) [Buy at Amazon](http://www.amazon.com/CanaKit-Raspberry-Wireless-Adapter-Dongle/dp/B00GFAN498/)
 
 ### Skills you need
 
@@ -94,7 +95,7 @@ If you’re on a Windows PC, follow the instructions here to [SSH Using windows]
 
 Now that you know the IP address of your Raspberry Pi, you are ready to connect to it remotely using SSH. To do this, open the terminal utility on the computer you would like to connect from and type the following:
 
-	pi@<YOUR Raspberry Pi IP ADDRESS>
+	ssh pi@<YOUR Raspberry Pi IP ADDRESS>
 
 It will prompt you for your password. *NOTE*: the default password for the user pi is **raspberry**
 
@@ -167,7 +168,9 @@ If you run into some "Unable to fetch" errors while trying to install VLC, try t
 	sudo apt-get update
 	sudo apt-get upgrade
 	sudo apt-get install vlc-nox vlc-data
-	
+
+NOTE: Running "sudo apt-get upgrade" might take a while. Grab a coffee!
+
 Source: https://www.raspberrypi.org/forums/viewtopic.php?f=66&t=67399
 	
 **Make sure VLC is installed correctly**
@@ -224,7 +227,7 @@ You need to have Java Development Kit (JDK) version 8 or higher installed on the
 Assuming this is a fresh Raspberry Pi and you do not already have JDK installed, you'll need to download JDK 8 from [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). 
 
 
-Download the tar.gz file listed for **Linux ARM 32 Hard Float ABI** from the Oracle link above. At the time of this writing, the name of this file is jdk-8u77-linux-arm32-vfp-hflt.tar.gz.
+Download the tar.gz file listed for **Linux ARM 32 Soft/Hard Float ABI** from the Oracle link above (Oracle seems to keep changing the name of this file alternating between Soft/Hard every couple weeks. They are both essentially the same, and should both work just fine). Also, just to be clear, you want to download the Java SE Development Kit, **not** the Java SE Development Kit Demos and Samples. At the time of this writing, the name of this file is jdk-8u77-linux-arm32-vfp-hflt.tar.gz.
 
 **NOTE**: Although there is a 64-bit ARMv8 that Apple and some other smartphones use, there are no raspberry 64-bit ARM processors on pis yet. More info: [Raspberry Pi Blog.com](http://www.rpiblog.com/2014/03/installing-oracle-jdk-8-on-raspberry-pi.html)
 
@@ -492,7 +495,7 @@ Edit the following values in this file:
 - **dsn**: Enter the alphanumeric string that you used for the unique product identifier in the products object in the server's config.js. For example: **123456**.
 - **provisioningMethod**: Enter **companionService**.
 
-![](assets/avs-config.json.png)
+![](assets/avs-config-json.png)
 
 **Save** the file.
 
@@ -534,32 +537,11 @@ ___
 
 ## 9 - Start the client
 
-Open a new terminal window/tab (SHIFT+CTRL+TAB in Raspbian)
+Open a new terminal window/tab (SHIFT+CTRL+TAB in Raspbian) and navigate to:
+
+	cd <REFERENCE_IMPLEMENTATION>/samples/javaclient 
 
 ![](assets/start-client.png)
-
-	cd <REFERENCE_IMPLEMENTATION>/samples/javaclient
-
-
-**Upgrade your Java version**
-
-Make the script executable by typing:
-
-	chmod +x install-java8.sh
-
-Run the installation script:
-	
-	./install-java8.sh
-
-![](assets/avs-upgrade-java.png)
-
-![](assets/java-installation-tos-1.png)
-
-You will get a message from Oracle Java installer that you must accept the Terms of Service for Java SE Platform, press Enter.
-
-![](assets/java-installation-tos-2.png)
-
-Press **Tab**, and then **Enter** to say “**Yes**” to the Terms of Service.
 
 **Build the app**
 
@@ -590,7 +572,7 @@ You are now ready to run the client app by typing:
 
 	*Please register your device by visiting the following website on any system and following the instructions: https://localhost:3000/provision/d340f629bd685deeff28a917 Hit OK once completed*.
 
-	![](assets/client-running.png)
+	![](assets/avs-client-running.png)
 
 	**Copy** the URL from the popup window and **paste** it into a **web browser**. In this example, the URL to copy and paste is https://localhost:3000/provision/d340f629bd685deeff28a917. 
 
@@ -691,4 +673,24 @@ https://www.hackster.io/Anwaarullah/sharing-wifi-with-raspberry-pi-using-a-lan-c
 ### What does the ssl.cnf file look like?
 [Here's](https://gist.github.com/ajotwani/a0d54110a968c984fd0b) what the ssl.cnf file would look like, replacing country, state, locality with your respective info. 
 
+###  “Cannot connect to the Companion Service” errors
+This could be because of one of 3 things - 
 
+
+1. **Bad certificate** - which could be a result of - 
+	- Bad ssl.cnf file (See FAQ above for what it should look like), 
+	- incorrect java version, 
+	- possibly wrong passphrase in the config.json file, 
+
+
+2. **Incorrect Product id** - Make sure that these values are the same -
+	- Device Type Info -> [Device Type ID](https://github.com/amzn/alexa-avs-raspberry-pi#34-register-your-product-and-create-a-security-profile) on the Amazon Developer Portal, and 
+	- Product ID in SSL cert generation (when prompted by [generate.sh](https://github.com/amzn/alexa-avs-raspberry-pi#4---generate-self-signed-certificates)), and
+	- Product ID in [config.json](https://github.com/amzn/alexa-avs-raspberry-pi/blob/master/samples/javaclient/config.json)
+	- the "key" in the products "key":["value"] pair in [config.js](https://github.com/amzn/alexa-avs-raspberry-pi/blob/master/samples/companionService/config.js), and 
+
+3. **Incorrect DSN** - Make sure that these values are the same -
+	- dsn in [config.json](https://github.com/amzn/alexa-avs-raspberry-pi/blob/master/samples/javaclient/config.json), and 
+	- the "value" in the products "key":["value"] pair in [config.js](https://github.com/amzn/alexa-avs-raspberry-pi/blob/master/samples/companionService/config.js)
+	
+4. The Companion Service isn’t actually [running](https://github.com/amzn/alexa-avs-raspberry-pi#8---run-the-server).
